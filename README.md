@@ -49,7 +49,7 @@ my-next-app/
   └── tsconfig.json
   └── package.json
   └── next.config.js
-
+```
 ## 🚀 How to run locally
 In one terminal 
 ```
