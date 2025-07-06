@@ -8,10 +8,21 @@ export default function Home() {
 
   useEffect(() => {
     fetch("http://localhost:8080/api/hello")
-      .then((res) => res.text())
-      .then((data) => setMessage(data))
+      .then((res) => res.json())
+      .then((data) => setMessage(data.message))
       .catch((err) => console.error(err));
   }, []);
+
+  const fetchAndSet = async (url: string, field: string) => {
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      setMessage(data[field]);
+    } catch (err) {
+      console.error(err);
+      setMessage("Error fetching data");
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-500 via-pink-500 to-yellow-500 p-8">
@@ -32,8 +43,41 @@ export default function Home() {
           Live message from your Go backend:
         </p>
 
-        <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-4 rounded-xl shadow-md text-lg sm:text-xl font-semibold transition-transform transform hover:scale-105">
+        <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-4 rounded-xl shadow-md text-lg sm:text-xl font-semibold transition-transform transform hover:scale-105 mb-4">
           {message || "Loading..."}
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-2 mt-4">
+          <button
+            onClick={() => fetchAndSet("http://localhost:8080/api/hello", "message")}
+            className="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 transition"
+          >
+            Hello
+          </button>
+          <button
+            onClick={() => fetchAndSet("http://localhost:8080/api/time", "time")}
+            className="bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700 transition"
+          >
+            Show Time
+          </button>
+          <button
+            onClick={() => fetchAndSet("http://localhost:8080/api/random", "random")}
+            className="bg-pink-600 text-white px-3 py-2 rounded hover:bg-pink-700 transition"
+          >
+            Random Number
+          </button>
+          <button
+            onClick={() => fetchAndSet("http://localhost:8080/api/quote", "quote")}
+            className="bg-yellow-600 text-white px-3 py-2 rounded hover:bg-yellow-700 transition"
+          >
+            Random Quote
+          </button>
+          <button
+            onClick={() => fetchAndSet("http://localhost:8080/api/greet?name=Harshita", "greeting")}
+            className="bg-purple-600 text-white px-3 py-2 rounded hover:bg-purple-700 transition"
+          >
+            Greet Me
+          </button>
         </div>
       </main>
 
