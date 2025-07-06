@@ -1,22 +1,22 @@
-# 🦫 Next.js + Go Backend Test Project
+# 📝 Next.js + Go Backend Notes App
 
-This project is a **small proof of concept** to explore how a Go backend can work seamlessly with a modern Next.js frontend.
+This project is a **small proof of concept** showing how a Go backend can perform CRUD operations (create, read, delete) and connect seamlessly with a modern Next.js frontend.
 
-It isn’t a production-ready application — just a lightweight setup to test APIs, learn how to connect the two, and see live data flowing from Go to Next.js.
-Ideal for practicing full-stack basics and experimenting with integration!
+It isn’t a production-ready app — just a lightweight setup to practice full-stack basics, build a simple notes feature, and learn how frontend & backend can talk over APIs.
 
 ---
 
 ## ✨ What this project does
-- Starts a small **Go HTTP server** with multiple endpoints:
-  - `/api/hello` → returns hello message
-  - `/api/time` → returns current server time
-  - `/api/random` → returns random number
-  - `/api/quote` → returns random quote
-  - `/api/greet?name=Harshita` → returns greeting
-- Uses **Next.js frontend** (with TypeScript) to call these APIs and show results
-- Styled with **Tailwind CSS** + light animations & gradients
-- Uses ESLint for linting and clean code
+- Starts a simple **Go HTTP server** with these endpoints:
+  - `GET /api/notes` → get all notes
+  - `POST /api/notes/create` → add a new note
+  - `DELETE /api/notes/delete?id=ID` → delete a note
+- Uses **Next.js frontend** (TypeScript) to:
+  - Display the list of notes
+  - Add new notes
+  - Delete notes
+- Styled with **Tailwind CSS** → gradient background, rounded cards, smooth animations
+- Uses ESLint for clean & consistent code
 
 ---
 
@@ -25,20 +25,22 @@ Ideal for practicing full-stack basics and experimenting with integration!
   - [Next.js](https://nextjs.org/) (App Router)
   - **TypeScript**
   - **Tailwind CSS**
-  - **ESLint** (auto-added during project setup to keep code clean)
+  - **ESLint**
 - **Backend:**
   - **Go** (Golang)
   - Standard `net/http` package
 - **Others:**
   - HTML, CSS
-  - Random number generation, quotes etc. for testing
+  - Simple in-memory data storage for notes
 
 ---
 
 ## 📂 **Folder structure (important files only)**
 ```plaintext
 golang_project/
-  └── main.go                # Go backend
+  ├── main.go           # Go backend main entry
+  ├── handlers.go       # Handlers for CRUD
+  └── models.go         # Note model
 
 my-next-app/
   └── src/app/page.tsx       # Next.js frontend page
@@ -47,7 +49,7 @@ my-next-app/
   └── tsconfig.json
   └── package.json
   └── next.config.js
-```
+
 ## 🚀 How to run locally
 In one terminal 
 ```
