@@ -5,22 +5,61 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [message, setMessage] = useState<string>("");
+  const [notes, setNotes] = useState<{ id: number; text: string }[]>([]);
+  const [newNote, setNewNote] = useState<string>("");
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/hello")
-      .then((res) => res.json())
-      .then((data) => setMessage(data.message))
-      .catch((err) => console.error(err));
+    fetchAndSet("http://localhost:8080/api/notes", ""); // fetch notes directly
   }, []);
 
   const fetchAndSet = async (url: string, field: string) => {
     try {
       const res = await fetch(url);
       const data = await res.json();
-      setMessage(data[field]);
+      if (field) {
+        setMessage(data[field]);
+      } else {
+        setNotes(data);
+      }
     } catch (err) {
       console.error(err);
       setMessage("Error fetching data");
+    }
+  };
+
+  const fetchNotes = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/api/notes");
+      const data = await res.json();
+      setNotes(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const addNote = async () => {
+    if (!newNote.trim()) return;
+    try {
+      await fetch("http://localhost:8080/api/notes/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: newNote }),
+      });
+      setNewNote("");
+      fetchNotes();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const deleteNote = async (id: number) => {
+    try {
+      await fetch(`http://localhost:8080/api/notes/delete?id=${id}`, {
+        method: "DELETE",
+      });
+      fetchNotes();
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -40,44 +79,50 @@ export default function Home() {
         </h1>
 
         <p className="text-white/90 text-base sm:text-lg font-mono mb-6">
-          Live message from your Go backend:
+          Your notes (CRUD with Go backend):
         </p>
-
-        <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-4 rounded-xl shadow-md text-lg sm:text-xl font-semibold transition-transform transform hover:scale-105 mb-4">
-          {message || "Loading..."}
-        </div>
 
         <div className="flex flex-wrap justify-center gap-2 mt-4">
           <button
-            onClick={() => fetchAndSet("http://localhost:8080/api/hello", "message")}
+            onClick={() => fetchAndSet("http://localhost:8080/api/notes", "")}
             className="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 transition"
           >
-            Hello
+            Refresh Notes
           </button>
+        </div>
+
+        {/* CRUD: add new note */}
+        <div className="mt-6">
+          <input
+            value={newNote}
+            onChange={(e) => setNewNote(e.target.value)}
+            placeholder="Enter new note"
+            className="px-3 py-2 rounded border text-black mr-2"
+          />
           <button
-            onClick={() => fetchAndSet("http://localhost:8080/api/time", "time")}
-            className="bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700 transition"
+            onClick={addNote}
+            className="bg-teal-600 text-white px-3 py-2 rounded hover:bg-teal-700 transition"
           >
-            Show Time
+            Add Note
           </button>
-          <button
-            onClick={() => fetchAndSet("http://localhost:8080/api/random", "random")}
-            className="bg-pink-600 text-white px-3 py-2 rounded hover:bg-pink-700 transition"
-          >
-            Random Number
-          </button>
-          <button
-            onClick={() => fetchAndSet("http://localhost:8080/api/quote", "quote")}
-            className="bg-yellow-600 text-white px-3 py-2 rounded hover:bg-yellow-700 transition"
-          >
-            Random Quote
-          </button>
-          <button
-            onClick={() => fetchAndSet("http://localhost:8080/api/greet?name=Harshita", "greeting")}
-            className="bg-purple-600 text-white px-3 py-2 rounded hover:bg-purple-700 transition"
-          >
-            Greet Me
-          </button>
+        </div>
+
+        {/* List notes */}
+        <div className="mt-4 space-y-2">
+          {notes.map((note) => (
+            <div
+              key={note.id}
+              className="flex items-center justify-between bg-white/50 px-3 py-2 rounded shadow text-black"
+            >
+              <span>{note.text}</span>
+              <button
+                onClick={() => deleteNote(note.id)}
+                className="text-red-600 hover:text-red-800 font-semibold"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
         </div>
       </main>
 
