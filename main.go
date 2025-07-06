@@ -6,8 +6,10 @@ import (
 )
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Access-Control-Allow-Origin", "*")
     fmt.Fprintf(w, "Hello from Go backend!")
 }
+
 
 func main() {
     http.HandleFunc("/api/hello", helloHandler)
